@@ -1,0 +1,1 @@
+from whisperer_ml.converter import convert_to_wav
