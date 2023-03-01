@@ -16,8 +16,8 @@ app = FastAPI(
 
 
 @app.post("/convertfiles")
-async def create_files(files: List[UploadFile]):
+async def save_files(files: List[UploadFile]):
     for file in files:
         data, samplerate = sf.read(file.file)
-        sf.write(db.joinpath(file.filename), data, samplerate, subtype="PCM_16")
+        sf.write(db.joinpath(file.filename), data, samplerate)
     return {"filenames": [file.filename for file in files]}
