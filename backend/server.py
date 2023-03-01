@@ -6,7 +6,7 @@ import soundfile as sf
 from pydantic import BaseModel
 from pathlib import Path
 
-db = Path("../data/raw_files")
+DB_RAW = Path("../data/raw_files")
 
 app = FastAPI(
     title="Whisperer Dataset Maker",
@@ -19,5 +19,5 @@ app = FastAPI(
 async def save_files(files: List[UploadFile]):
     for file in files:
         data, samplerate = sf.read(file.file)
-        sf.write(db.joinpath(file.filename), data, samplerate)
+        sf.write(DB_RAW.joinpath(file.filename), data, samplerate)
     return {"filenames": [file.filename for file in files]}
