@@ -9,11 +9,7 @@ packages = [{include = "whisperer_ml_app"}]
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
 whisperer-ml = "^0.1.3"
-fastapi = "^0.92.0"
 streamlit = "^1.18.1"
-uvicorn = "^0.20.0"
-python-multipart = "^0.0.5"
-requests-toolbelt = "^0.10.1"
 
 
 [build-system]

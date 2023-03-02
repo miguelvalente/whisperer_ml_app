@@ -3,12 +3,14 @@ import requests
 import streamlit as st
 from pathlib import Path
 from random import randint
-from urls import CONVERT
 
 DB_RAW = Path("../data/raw_files")
 DB_CONVERTED = Path("../data/converted_files")
 DB_DATASETS = Path("../data/datasets")
 DB_ARCHIVES = Path("../data/archives")
+
+def make_plural(size):
+    return "s" if size > 1 else ""
 
 # This is Very Important always add apropiate emojis to your markdown
 
@@ -52,11 +54,8 @@ def intro():
         if uploaded_files and 'key' in st.session_state.keys():
 
             for file in uploaded_files:
-                # print(file)
                 data, samplerate = sf.read(file)
-                print(samplerate)
                 sf.write(DB_RAW.joinpath(file.name), data, samplerate)
-            # response = encode_files(uploaded_files, url=CONVERT)
             st.session_state.pop('key')
             st.experimental_rerun()
 
@@ -66,7 +65,7 @@ def intro():
 
         st.markdown(
             f"""
-                You have uploaded __{len(raw_files)}__ files
+                You have uploaded __{len(raw_files)}__ file{make_plural(len(raw_files))}
             """
         )
         st.dataframe(raw_files["file_name"])
