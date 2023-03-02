@@ -23,21 +23,21 @@ def encode_files(files, url):
 
 def intro():
     import streamlit as st
+    import pandas as pd
+    import soundfile as sf
 
     st.markdown(
         """
              # Whisperer 👂
-             #### Text-Audio dataset-maker
+             #### text-audio dataset-maker
         """)
 
     st.sidebar.success("Select a command above.")
 
     st.markdown(
         """
-        Whisperer is a small open-source project for text-audio auto dataset maker
-        for your Machine Learning and Data Science projects.
+        Whisperer is a small open-source project for automatic text-audio dataset making.
 
-        The Design of this WebApp is based on the available commands of the whisperer_ml package.
 
         1. **Upload some audio or video files you want to use**
 
@@ -46,23 +46,30 @@ def intro():
     if 'key' not in st.session_state:
         st.session_state.key = str(randint(1000, 100000000))
 
-    # a button to upload files
-    uploaded_files = st.file_uploader("Upload Files", accept_multiple_files=True, key=st.session_state.key)
+    uploaded_files = st.file_uploader("Upload Files", accept_multiple_files=True, key=st.session_state.key, label_visibility='hidden')
 
     if st.button("Upload"):
         if uploaded_files and 'key' in st.session_state.keys():
-            response = encode_files(uploaded_files, url=CONVERT)
+
+            for file in uploaded_files:
+                # print(file)
+                data, samplerate = sf.read(file)
+                print(samplerate)
+                sf.write(DB_RAW.joinpath(file.name), data, samplerate)
+            # response = encode_files(uploaded_files, url=CONVERT)
             st.session_state.pop('key')
             st.experimental_rerun()
 
-    if list(DB_RAW.iterdir()):
+    raw_files = pd.DataFrame(list(DB_RAW.iterdir()), columns=["file_path"])
+    raw_files["file_name"] = raw_files["file_path"].apply(lambda x: x.name)
+    if not raw_files.empty:
+
         st.markdown(
-            """
-             #### Uploaded Files
+            f"""
+                You have uploaded __{len(raw_files)}__ files
             """
         )
-        for file in DB_RAW.iterdir():
-            st.write(file.name)
+        st.dataframe(raw_files["file_name"])
 
     if st.button("Clear Files"):
         for file in DB_RAW.iterdir():
@@ -143,18 +150,18 @@ def transcribe():
         """
     )
 
-    converted_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
-    converted_files["file_name"] = converted_files["file_path"].apply(lambda x: x.name)
-    if not converted_files.empty:
+    raw_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
+    raw_files["file_name"] = raw_files["file_path"].apply(lambda x: x.name)
+    if not raw_files.empty:
 
         st.markdown(
             f"""
-                You have __{len(converted_files)}__ files to transcribe
+                You have __{len(raw_files)}__ files to transcribe
             """
         )
-        st.dataframe(converted_files["file_name"])
+        st.dataframe(raw_files["file_name"])
 
-    dataset_name = st.text_input(" ", value="my_dataset_name")
+    dataset_name = st.text_input("dataset name", value="my_dataset_name", label_visibility='hidden')
 
     if st.button("Make"):
         dataset_path = DB_DATASETS.joinpath(dataset_name)
