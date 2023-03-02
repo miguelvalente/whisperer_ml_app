@@ -4,10 +4,10 @@ import streamlit as st
 from pathlib import Path
 from random import randint
 
-DB_RAW = Path("../data/raw_files")
-DB_CONVERTED = Path("../data/converted_files")
-DB_DATASETS = Path("../data/datasets")
-DB_ARCHIVES = Path("../data/archives")
+DB_RAW = Path("data/raw_files")
+DB_CONVERTED = Path("data/converted_files")
+DB_DATASETS = Path("data/datasets")
+DB_ARCHIVES = Path("data/archives")
 
 def make_plural(size):
     return "s" if size > 1 else ""

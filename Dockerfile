@@ -1,12 +1,9 @@
-# app/Dockerfile
-
 FROM python:3.10-slim
-
-WORKDIR /
 
 RUN apt-get update && apt-get install -y \
     build-essential \
     gcc \
+    libsndfile1 \
     libffi-dev\
     g++ \
     curl \
@@ -14,10 +11,11 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+WORKDIR /home
+
 RUN pip install poetry
 
-
-COPY pyproject.toml poetry.lock ./
+COPY . /home
 
 RUN poetry config virtualenvs.create false
 RUN poetry --version
@@ -28,4 +26,4 @@ EXPOSE 8501
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
-ENTRYPOINT ["streamlit", "run", "app/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "app/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
