@@ -7,6 +7,10 @@ from urls import CONVERT
 
 DB_RAW = Path("../data/raw_files")
 DB_CONVERTED = Path("../data/converted_files")
+DB_DATASETS = Path("../data/datasets")
+DB_ARCHIVES = Path("../data/archives")
+
+# This is Very Important always add apropiate emojis to your markdown
 
 def encode_files(files, url):
 
@@ -39,7 +43,6 @@ def intro():
 
         """)
 
-
     if 'key' not in st.session_state:
         st.session_state.key = str(randint(1000, 100000000))
 
@@ -68,7 +71,7 @@ def intro():
 
     st.markdown(
         """
-        2. 👈  **Select a command from the dropdown on the left** 
+        2. 👈  **Select a command from the dropdown menu on the left** 
         """
     )
 
@@ -96,10 +99,84 @@ def convert():
         for file in DB_RAW.iterdir():
             st.write(file.name)
 
+def transcribe():
+    import streamlit as st
+    from whisperer_ml.transcriber import transcribe
+    import pandas as pd
+    import shutil
+    # def transcribe(audio_files: List[Path], wavs_path, transcription_path) -> None:
+
+    st.markdown(
+        """
+             # Make a dataset 📚
+
+             In this page you can make a dataset from the converted files
+             and see the datasets you have already made.
+        """)
+
+    available_datasets = pd.DataFrame(list(DB_DATASETS.iterdir()), columns=["dataset_path"])
+    available_datasets["dataset_name"] = available_datasets["dataset_path"].apply(lambda x: x.name)
+
+    # Developer Note: Always add emojis to every single st.markdown but do not repeat them
+    st.markdown(
+        """
+             #### Your Datasets 📁
+        """
+    ) 
+
+    if not available_datasets.empty:
+        selected_dataset = st.selectbox("Select a dataset to download", available_datasets["dataset_name"])
+
+        down = st.download_button(
+            label="Download Dataset",
+            data=DB_ARCHIVES.joinpath(f"{selected_dataset}.zip").read_bytes(),
+            file_name=f"{selected_dataset}.zip",
+            mime="application/zip",
+        )
+
+    else:
+        st.write("You have no datasets yet.")
+
+    st.markdown(
+        """
+             #### Transcribe a your files and make a new dataset 📝
+        """
+    )
+
+    converted_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
+    converted_files["file_name"] = converted_files["file_path"].apply(lambda x: x.name)
+    if not converted_files.empty:
+
+        st.markdown(
+            f"""
+                You have __{len(converted_files)}__ files to transcribe
+            """
+        )
+        st.dataframe(converted_files["file_name"])
+
+    dataset_name = st.text_input(" ", value="my_dataset_name")
+
+    if st.button("Make"):
+        dataset_path = DB_DATASETS.joinpath(dataset_name)
+        wavs_path = dataset_path.joinpath("wavs")
+        transcription_path = dataset_path.joinpath("transcriptions")
+
+        if not dataset_path.exists():
+            dataset_path.mkdir(exist_ok=True)
+            wavs_path.mkdir(exist_ok=True)
+            transcription_path.mkdir(exist_ok=True)
+        else:
+            st.write(f"Dataset {dataset_name} already exists at {dataset_path}")
+        transcribe(list(DB_CONVERTED.iterdir()), wavs_path, transcription_path)
+
+        shutil.make_archive(DB_ARCHIVES.joinpath(dataset_name), "zip", DB_DATASETS.joinpath(dataset_name))
+        st.experimental_rerun()
+
 
 page_names_to_funcs = {
     "-": intro,
-    "convert": convert
+    "convert": convert,
+    "transcribe": transcribe,
 }
 
 demo_name = st.sidebar.selectbox("Choose a command", page_names_to_funcs.keys())
