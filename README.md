@@ -12,10 +12,16 @@ Built with [Streamlit](https://streamlit.io/).
 
 ### Installing
 
-You can either pull the image from Docker Hub or build locally.
-- Pulling from Docker Hub
+1. Download the repo
+
 ```
-docker pull miguelvalente/whisperer_ml_app
+git clone https://github.com/miguelvalente/whisperer_ml_app
+
+```
+
+2. Build the image. It migth take a while because you just entered dependency hell. Xzibit style. And not the cool MTV version you're thinking about.
+```
+docker build -t whisperer_ml_app .
 ```
 ### Running
 
