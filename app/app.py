@@ -1,4 +1,3 @@
-import io
 import requests
 import streamlit as st
 from pathlib import Path
@@ -15,8 +14,6 @@ def make_plural(size):
 
 
 # This is Very Important always add apropiate emojis to your markdown
-
-
 def encode_files(files, url):
     multiple_files = [("files", (file.name, file, file.type)) for file in files]
 
@@ -27,6 +24,8 @@ def intro():
     import streamlit as st
     import pandas as pd
     import soundfile as sf
+    from whisperer_ml.converter import convert
+    from stqdm import stqdm
 
     st.markdown(
         """
@@ -42,7 +41,7 @@ def intro():
         Whisperer is a small open-source project for automatic text-audio dataset making.
 
 
-        1. **Upload some audio or video files you want to use**
+        1. **Upload some audio or video files**
 
         """
     )
@@ -67,6 +66,9 @@ def intro():
 
     raw_files = pd.DataFrame(list(DB_RAW.iterdir()), columns=["file_path"])
     raw_files["file_name"] = raw_files["file_path"].apply(lambda x: x.name)
+
+    # convert_bar = st.progress(0, text="Converting files to wav...")
+
     if not raw_files.empty:
         st.markdown(
             f"""
@@ -74,11 +76,14 @@ def intro():
             """
         )
         st.dataframe(raw_files["file_name"])
-
-    if st.button("Clear Files"):
-        for file in DB_RAW.iterdir():
+        for file in stqdm(raw_files["file_path"], desc="Converting files to wav..."):
+            convert([file], DB_CONVERTED)
             file.unlink()
-        st.experimental_rerun()
+
+    # if st.button("Clear Files"):
+    #     for file in DB_RAW.iterdir():
+    #         file.unlink()
+    #     st.experimental_rerun()
 
     st.markdown(
         """
@@ -86,31 +91,18 @@ def intro():
         """
     )
 
+def diarize():
+    import streamlit as st
+    from whisperer_ml.diarizer import diarize
 
-def convert():
-    from whisperer_ml.converter import convert
+    st.markdown(
+        """
+             # Diarize 🗣
 
-    if list(DB_RAW.iterdir()):
-        st.markdown(
-            """
-             #### Uploaded Files
-            """
-        )
-        for file in DB_RAW.iterdir():
-            st.write(file.name)
-
-        if st.button("convert"):
-            convert(list(DB_RAW.iterdir()), DB_CONVERTED)
-
-    if list(DB_CONVERTED.iterdir()):
-        st.markdown(
-            """
-             #### Converted Files
-            """
-        )
-        for file in DB_RAW.iterdir():
-            st.write(file.name)
-
+             In this page you can diarize the diles converted to wav
+             and see the diarizations you have already made.
+        """
+    )
 
 def transcribe():
     import streamlit as st
@@ -199,6 +191,7 @@ def transcribe():
 
 page_names_to_funcs = {
     "-": intro,
+    "diarize": diarize,
     "transcribe": transcribe,
 }
 

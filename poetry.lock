@@ -4584,6 +4584,22 @@ pure-eval = "*"
 tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 
 [[package]]
+name = "stqdm"
+version = "0.0.5"
+description = "Easy progress bar for streamlit based on the awesome streamlit.progress and tqdm"
+category = "main"
+optional = false
+python-versions = ">=3.7.2,<4.0.0"
+files = [
+    {file = "stqdm-0.0.5-py3-none-any.whl", hash = "sha256:3177858c1ce5244821f13cc7cbd88a6dc8f154ef1bd12d2fa3342f2a9caf8843"},
+    {file = "stqdm-0.0.5.tar.gz", hash = "sha256:1bed78e60068da3afc7c6d87a5388006036633aa2fe2e19fa7db46483ef1227e"},
+]
+
+[package.dependencies]
+streamlit = ">=0.66"
+tqdm = ">=4.50"
+
+[[package]]
 name = "streamlit"
 version = "1.19.0"
 description = "The fastest way to build data apps in Python"
@@ -5489,4 +5505,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.11"
-content-hash = "5ba210e763ce66aa61156fc82d6f158e46c40d3dbf371b98db8a9b175057aaa6"
+content-hash = "b7a7fbc19d54ce2370f2652be32e95280d19771eb402254981005351bc52ebd9"
