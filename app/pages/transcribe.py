@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 from whisperer_ml.transcriber import transcribe
 import shutil
-from db_paths import DB_CONVERTED, DB_DATASETS, DB_ARCHIVES         
+from db_paths import DB_CONVERTED, DB_DATASETS, DB_ARCHIVES
 
 st.markdown(
     """

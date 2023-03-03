@@ -1,5 +1,5 @@
-
 from pathlib import Path
+
 DB_RAW = Path("data/raw_files")
 DB_CONVERTED = Path("data/converted_files")
 DB_DATASETS = Path("data/datasets")
