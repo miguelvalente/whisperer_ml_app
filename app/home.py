@@ -56,7 +56,7 @@ if st.button("Upload & Convert"):
         st.experimental_rerun()
 
 raw_files = pd.DataFrame(list(DB_RAW.iterdir()), columns=["file_path"])
-raw_files["file_name"] = raw_files["file_path"].apply(lambda x: x.name)
+raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
 
 # convert_bar = st.progress(0, text="Converting files to wav...")
 
@@ -66,7 +66,7 @@ if not raw_files.empty:
             You have uploaded __{len(raw_files)}__ file{is_plural(len(raw_files))}
         """
     )
-    st.dataframe(raw_files["file_name"])
+    st.dataframe(raw_files["filename"])
     for file in stqdm(raw_files["file_path"], desc="Converting files to wav..."):
         convert([file], DB_CONVERTED)
         file.unlink()
