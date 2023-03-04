@@ -5,6 +5,13 @@ import shutil
 from db_paths import DB_CONVERTED, DB_DATASETS, DB_ARCHIVES, DB_SPEAKERS
 from format_functions import is_plural
 
+st.set_page_config(
+    page_title="Transcribe",
+    page_icon="📚",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 st.markdown(
     """
             # Make a dataset 📚

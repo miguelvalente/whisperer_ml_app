@@ -4,6 +4,14 @@ from whisperer_ml.diarizer import diarize
 from db_paths import DB_CONVERTED, DB_SPEAKERS
 from format_functions import is_plural
 
+# This is Very Important always add apropiate emojis to your markdown
+st.set_page_config(
+    page_title="Diarize",
+    page_icon="🗣",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 
 st.markdown(
     """
