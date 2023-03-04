@@ -2,7 +2,8 @@ import pandas as pd
 import streamlit as st
 from whisperer_ml.transcriber import transcribe
 import shutil
-from db_paths import DB_CONVERTED, DB_DATASETS, DB_ARCHIVES         
+from db_paths import DB_CONVERTED, DB_DATASETS, DB_ARCHIVES, DB_SPEAKERS
+from format_functions import is_plural
 
 st.markdown(
     """
@@ -46,21 +47,40 @@ st.markdown(
     """
 )
 
+
+col1, col2 = st.columns(2)
+
 raw_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
-raw_files["file_name"] = raw_files["file_path"].apply(lambda x: x.name)
+raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
 if not raw_files.empty:
-    st.markdown(
+    col1.markdown(
         f"""
-            You have __{len(raw_files)}__ files to transcribe
+            You have __{len(raw_files)}__ audio file{is_plural(len(raw_files))} to transcribe
         """
     )
-    st.dataframe(raw_files["file_name"])
+    col1.dataframe(raw_files["filename"])
+
+speaker_files = pd.DataFrame(list(DB_SPEAKERS.iterdir()), columns=["file_path"])
+speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
+if not speaker_files.empty:
+    col2.markdown(
+        f"""
+            You have __{len(speaker_files)}__ diarized audio file{is_plural(len(speaker_files))} to transcribe
+        """
+    )
+    col2.dataframe(speaker_files["filename"])
+
+choice = st.radio(
+    "Transcribe from",
+    options=["regular", "diarized"],
+)
+
 
 dataset_name = st.text_input(
     "dataset name", value="my_dataset_name", label_visibility="hidden"
 )
 
-if st.button("Make"):
+if st.button("Make Dataset"):
     dataset_path = DB_DATASETS.joinpath(dataset_name)
     wavs_path = dataset_path.joinpath("wavs")
     transcription_path = dataset_path.joinpath("transcriptions")
@@ -71,7 +91,13 @@ if st.button("Make"):
         transcription_path.mkdir(exist_ok=True)
     else:
         st.write(f"Dataset {dataset_name} already exists at {dataset_path}")
-    transcribe(list(DB_CONVERTED.iterdir()), wavs_path, transcription_path)
+
+    if choice == "regular":
+        with st.spinner("Transcribing..."):
+            transcribe(list(DB_CONVERTED.iterdir()), wavs_path, transcription_path)
+    else:
+        with st.spinner("Transcribing..."):
+            transcribe(list(DB_SPEAKERS.iterdir()), wavs_path, transcription_path)
 
     shutil.make_archive(
         DB_ARCHIVES.joinpath(dataset_name),
