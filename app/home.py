@@ -25,8 +25,6 @@ st.markdown(
     """
 )
 
-st.sidebar.success("Select a command above.")
-
 st.markdown(
     """
     Whisperer is a small open-source project for automatic text-audio dataset making.
@@ -58,8 +56,6 @@ if st.button("Upload & Convert"):
 raw_files = pd.DataFrame(list(DB_RAW.iterdir()), columns=["file_path"])
 raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
 
-# convert_bar = st.progress(0, text="Converting files to wav...")
-
 if not raw_files.empty:
     st.markdown(
         f"""
@@ -70,11 +66,6 @@ if not raw_files.empty:
     for file in stqdm(raw_files["file_path"], desc="Converting files to wav..."):
         convert([file], DB_CONVERTED)
         file.unlink()
-
-    # if st.button("Clear Files"):
-    #     for file in DB_RAW.iterdir():
-    #         file.unlink()
-    #     st.experimental_rerun()
 
 st.markdown(
     """

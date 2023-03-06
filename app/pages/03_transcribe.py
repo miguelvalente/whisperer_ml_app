@@ -26,7 +26,6 @@ available_datasets["dataset_name"] = available_datasets["dataset_path"].apply(
     lambda x: x.name
 )
 
-# Developer Note: Always add emojis to every single st.markdown but do not repeat them
 st.markdown(
     """
             #### Your Datasets 📁
@@ -55,31 +54,52 @@ st.markdown(
 )
 
 
-col1, col2 = st.columns(2)
-
+# region Display Files
+col1, col2, col3, col4 = st.columns(4, gap="small")
+# region Raw Files 
 raw_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
 raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
+raw_files["delete"] = False
 if not raw_files.empty:
-    col1.markdown(
-        f"""
-            You have __{len(raw_files)}__ audio file{is_plural(len(raw_files))} to transcribe
-        """
-    )
-    col1.dataframe(raw_files["filename"])
+    col1.dataframe(raw_files["filename"], use_container_width=True)
+    user_input_raw = col2.experimental_data_editor(raw_files["delete"])
+# endregion
 
+# region Speaker Files 
 speaker_files = pd.DataFrame(list(DB_SPEAKERS.iterdir()), columns=["file_path"])
 speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
+speaker_files["delete"] = False
 if not speaker_files.empty:
-    col2.markdown(
-        f"""
-            You have __{len(speaker_files)}__ diarized audio file{is_plural(len(speaker_files))} to transcribe
-        """
-    )
-    col2.dataframe(speaker_files["filename"])
+    col3.dataframe(speaker_files["filename"], use_container_width=True)
+    user_input_speaker = col4.experimental_data_editor(speaker_files["delete"])
+# endregion
+
+# region Delete Files
+if st.button("Delete Selected Files"):
+    to_delete = raw_files[user_input_raw]
+    for file_path in to_delete["file_path"]:
+        file_path.unlink()
+    to_delete = speaker_files[user_input_speaker]
+    for file_path in to_delete["file_path"]:
+        file_path.unlink()
+    st.experimental_rerun()
+# endregion
+# endregion
+
+
+st.markdown(
+    """
+            #### Transcribe from full files or diarized files? 
+    """
+)
 
 choice = st.radio(
-    "Transcribe from",
-    options=["regular", "diarized"],
+    "Transcribe ",
+    options=[
+        "full",
+        "diarized"
+    ],
+    label_visibility="hidden",
 )
 
 
@@ -99,7 +119,7 @@ if st.button("Make Dataset"):
     else:
         st.write(f"Dataset {dataset_name} already exists at {dataset_path}")
 
-    if choice == "regular":
+    if choice == "full":
         with st.spinner("Transcribing..."):
             transcribe(list(DB_CONVERTED.iterdir()), wavs_path, transcription_path)
     else:

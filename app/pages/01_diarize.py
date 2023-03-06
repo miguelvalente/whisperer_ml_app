@@ -27,6 +27,7 @@ st.markdown(
 
 speaker_files = pd.DataFrame(list(DB_SPEAKERS.iterdir()), columns=["file_path"])
 speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
+speaker_files["delete"] = False
 
 diarized = speaker_files["filename"].apply(
     lambda x: "_".join(x.split("_")[:-2]) + "." + x.split(".")[-1]
@@ -70,4 +71,12 @@ if not speaker_files.empty:
             You have __{len(speaker_files)}__ diarizations
         """
     )
-    st.dataframe(speaker_files["filename"])
+
+    col1, col2 = st.columns(2, gap="small")
+    col1.dataframe(speaker_files["filename"], use_container_width=True)
+    user_input = col2.experimental_data_editor(speaker_files["delete"], )
+    if st.button("Delete Selected Files"):
+        to_delete = speaker_files[user_input]
+        for file in to_delete["filename"]:
+            DB_SPEAKERS.joinpath(file).unlink()
+        st.experimental_rerun()
