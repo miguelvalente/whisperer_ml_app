@@ -52,7 +52,7 @@ if not converted_files.empty:
     if not converted_files.empty:
         st.markdown(
             f"""
-                You have __{len(converted_files)}__ files to diarize
+                You have __{len(converted_files)}__ file{is_plural(len(converted_files))} to diarize
             """
         )
         st.dataframe(converted_files["filename"])

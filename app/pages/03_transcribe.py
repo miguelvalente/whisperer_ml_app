@@ -64,30 +64,34 @@ with st.expander("Original 🎧"):
     raw_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
     raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
     raw_files["delete"] = False
-    if not raw_files.empty:
+    if raw_files.empty:
+        st.write("You have no files yet.")
+    else:
         col1.dataframe(raw_files["filename"], use_container_width=True)
         user_input_raw = col2.experimental_data_editor(raw_files["delete"])
-    if st.button("Delete Orginal"):
-        to_delete = raw_files[user_input_raw]
-        for file_path in to_delete["file_path"]:
-            file_path.unlink()
-        st.experimental_rerun()
+        if st.button("Delete Orginal"):
+            to_delete = raw_files[user_input_raw]
+            for file_path in to_delete["file_path"]:
+                file_path.unlink()
+            st.experimental_rerun()
     # endregion
 
 # region Speaker Files
 with st.expander("Diarized 🗣"):
-    col3, col4 = st.columns(2, gap="small")
     speaker_files = pd.DataFrame(list(DB_SPEAKERS.iterdir()), columns=["file_path"])
     speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
     speaker_files["delete"] = False
-    if not speaker_files.empty:
+    col3, col4 = st.columns(2, gap="small")
+    if speaker_files.empty:
+        st.write("You have no diarized files yet.")
+    else:
         col3.dataframe(speaker_files["filename"], use_container_width=True)
         user_input_speaker = col4.experimental_data_editor(speaker_files["delete"])
-    if st.button("Delete Diarized"):
-        to_delete = speaker_files[user_input_speaker]
-        for file_path in to_delete["file_path"]:
-            file_path.unlink()
-        st.experimental_rerun()
+        if st.button("Delete Diarized"):
+            to_delete = speaker_files[user_input_speaker]
+            for file_path in to_delete["file_path"]:
+                file_path.unlink()
+            st.experimental_rerun()
     # endregion
 # endregion
 
