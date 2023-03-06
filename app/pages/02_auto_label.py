@@ -42,10 +42,9 @@ else:
         else:
             st.error("Must define number of speakers")
 
-if DB_SPEAKERS_LABELS.joinpath("speakers.txt").exists():
     st.markdown(
         """
-            ## Speakers
+            ## Auto-Label Results 🎉
         """
     )
-    st.dataframe(pd.read_csv(DB_SPEAKERS_LABELS.joinpath("speakers.txt"), sep="|"))
+    st.dataframe(pd.read_csv(DB_SPEAKERS_LABELS.joinpath("speakers.txt"), sep="|", names=["filename", "label"]))
