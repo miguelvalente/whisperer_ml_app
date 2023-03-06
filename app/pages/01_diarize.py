@@ -19,6 +19,9 @@ st.markdown(
 
             In this page you can diarize the diles converted to wav
             and see the diarizations you have already made.
+
+            __NOTE__: This feature is highly dependent on the uniformity of the audio files.
+            If a speaker in a file is present in diferent environments, the diarization might not work as expected.
     """
 )
 
