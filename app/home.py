@@ -10,13 +10,21 @@ from random import randint
 from db_paths import DB_RAW, DB_CONVERTED
 from format_functions import is_plural
 
-# This is Very Important always add apropiate emojis to your markdown
+# region SetUp Page
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+
 st.set_page_config(
     page_title="Whisperer",
     page_icon="👂",
     layout="wide",
     initial_sidebar_state="expanded",
 )
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 st.markdown(
     """
@@ -34,10 +42,12 @@ st.markdown(
 
     """
 )
+# endregion
 
 if "key" not in st.session_state:
     st.session_state.key = str(randint(1000, 100000000))
 
+# region Upload Files
 uploaded_files = st.file_uploader(
     "Upload Files",
     accept_multiple_files=True,
@@ -66,9 +76,10 @@ if not raw_files.empty:
     for file in stqdm(raw_files["file_path"], desc="Converting files to wav..."):
         convert([file], DB_CONVERTED)
         file.unlink()
+# endregion
 
 st.markdown(
     """
-    2. 👈  **Select a command from the dropdown menu on the left** 
+    2. 👈  **Use the commands from the menu on the left** 
     """
 )

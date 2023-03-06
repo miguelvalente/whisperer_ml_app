@@ -4,14 +4,21 @@ from whisperer_ml.diarizer import diarize
 from db_paths import DB_CONVERTED, DB_SPEAKERS
 from format_functions import is_plural
 
-# This is Very Important always add apropiate emojis to your markdown
+# region SetUp Page
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+
 st.set_page_config(
     page_title="Diarize",
     page_icon="🗣",
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 st.markdown(
     """
@@ -24,6 +31,7 @@ st.markdown(
             If a speaker in a file is present in diferent environments, the diarization might not work as expected.
     """
 )
+# endregion
 
 speaker_files = pd.DataFrame(list(DB_SPEAKERS.iterdir()), columns=["file_path"])
 speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
@@ -74,7 +82,9 @@ if not speaker_files.empty:
 
     col1, col2 = st.columns(2, gap="small")
     col1.dataframe(speaker_files["filename"], use_container_width=True)
-    user_input = col2.experimental_data_editor(speaker_files["delete"], )
+    user_input = col2.experimental_data_editor(
+        speaker_files["delete"],
+    )
     if st.button("Delete Selected Files"):
         to_delete = speaker_files[user_input]
         for file in to_delete["filename"]:
