@@ -1,5 +1,11 @@
 *__pycache__*
-data/*
+data/archives/*
+data/converted_files/*
+data/datasets/*
+data/raw_files/*
+data/speakers/*
+data/speakers_labels/*
+
 thoughts.txt
 pretrained_models
 .vscode
