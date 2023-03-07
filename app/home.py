@@ -7,16 +7,24 @@ import pandas as pd
 import streamlit as st
 from random import randint
 
-from db_paths import DB_RAW, DB_CONVERTED
+from db_paths import DB_RAW, DB_CONVERTED, DB_SPEAKERS
 from format_functions import is_plural
 
-# This is Very Important always add apropiate emojis to your markdown
+# region SetUp Page
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+
 st.set_page_config(
     page_title="Whisperer",
     page_icon="👂",
     layout="wide",
     initial_sidebar_state="expanded",
 )
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 st.markdown(
     """
@@ -24,8 +32,6 @@ st.markdown(
             #### text-audio dataset-maker
     """
 )
-
-st.sidebar.success("Select a command above.")
 
 st.markdown(
     """
@@ -36,10 +42,12 @@ st.markdown(
 
     """
 )
+# endregion
 
 if "key" not in st.session_state:
     st.session_state.key = str(randint(1000, 100000000))
 
+# region Upload/Convert Files
 uploaded_files = st.file_uploader(
     "Upload Files",
     accept_multiple_files=True,
@@ -57,27 +65,38 @@ if st.button("Upload & Convert"):
 
 raw_files = pd.DataFrame(list(DB_RAW.iterdir()), columns=["file_path"])
 raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
+# with st.spinner("Converting files to wav..."):
+for file in stqdm(raw_files["file_path"], desc="Converting files to wav..."):
+    convert(raw_files["file_path"], DB_CONVERTED)
+    file.unlink()
+# endregion
 
-# convert_bar = st.progress(0, text="Converting files to wav...")
 
-if not raw_files.empty:
-    st.markdown(
-        f"""
-            You have uploaded __{len(raw_files)}__ file{is_plural(len(raw_files))}
-        """
-    )
-    st.dataframe(raw_files["filename"])
-    for file in stqdm(raw_files["file_path"], desc="Converting files to wav..."):
-        convert([file], DB_CONVERTED)
-        file.unlink()
+# region Display Files
+st.markdown(""" #### Your Files """)
 
-    # if st.button("Clear Files"):
-    #     for file in DB_RAW.iterdir():
-    #         file.unlink()
-    #     st.experimental_rerun()
+with st.expander("Original 🎧"):
+    # region Raw Files
+    col1, col2 = st.columns(2, gap="small")
+    raw_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
+    raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
+    raw_files["delete"] = False
+    if raw_files.empty:
+        st.write("You have no files yet.")
+    else:
+        col1.dataframe(raw_files["filename"], use_container_width=True)
+        user_input_raw = col2.experimental_data_editor(raw_files["delete"])
+        if st.button("Delete Original"):
+            to_delete = raw_files[user_input_raw]
+            for file_path in to_delete["file_path"]:
+                file_path.unlink()
+            st.experimental_rerun()
+    # endregion
+
+# endregion
 
 st.markdown(
     """
-    2. 👈  **Select a command from the dropdown menu on the left** 
+    2. 👈  **Use the commands from the menu on the left** 
     """
 )

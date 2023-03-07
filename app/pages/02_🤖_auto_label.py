@@ -1,7 +1,15 @@
 import streamlit as st
-import pandas as pd 
+import pandas as pd
 from db_paths import DB_SPEAKERS, DB_SPEAKERS_LABELS
 from whisperer_ml.auto_labeler import auto_label
+
+# region SetUp Page
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
 
 st.set_page_config(
     page_title="Auto-Label",
@@ -9,6 +17,7 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="expanded",
 )
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 st.markdown(
     """
@@ -20,6 +29,7 @@ st.markdown(
             __NOTE__: This feature is highly dependent on the quality of the diarization.
     """
 )
+# endregion
 
 speaker_files = pd.DataFrame(list(DB_SPEAKERS.iterdir()), columns=["file_path"])
 speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
@@ -37,7 +47,11 @@ else:
 
     if st.button("Auto-Label"):
         if number_speakers:
-            auto_label(number_speakers, speaker_files["file_path"], DB_SPEAKERS_LABELS.joinpath("speakers.txt"))
+            auto_label(
+                number_speakers,
+                speaker_files["file_path"],
+                DB_SPEAKERS_LABELS.joinpath("speakers.txt"),
+            )
         else:
             st.error("Must define number of speakers")
 
@@ -46,4 +60,10 @@ else:
             ## Auto-Label Results 🎉
         """
     )
-    st.dataframe(pd.read_csv(DB_SPEAKERS_LABELS.joinpath("speakers.txt"), sep="|", names=["filename", "label"]))
+    st.dataframe(
+        pd.read_csv(
+            DB_SPEAKERS_LABELS.joinpath("speakers.txt"),
+            sep="|",
+            names=["filename", "label"],
+        )
+    )

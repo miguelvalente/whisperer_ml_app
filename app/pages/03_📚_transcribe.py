@@ -5,12 +5,21 @@ import shutil
 from db_paths import DB_CONVERTED, DB_DATASETS, DB_ARCHIVES, DB_SPEAKERS
 from format_functions import is_plural
 
+# region SetUp Page
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+
 st.set_page_config(
     page_title="Transcribe",
     page_icon="📚",
     layout="wide",
     initial_sidebar_state="expanded",
 )
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 st.markdown(
     """
@@ -20,18 +29,15 @@ st.markdown(
             and see the datasets you have already made.
     """
 )
+# endregion
 
+# region Display Datasets
 available_datasets = pd.DataFrame(list(DB_DATASETS.iterdir()), columns=["dataset_path"])
 available_datasets["dataset_name"] = available_datasets["dataset_path"].apply(
     lambda x: x.name
 )
 
-# Developer Note: Always add emojis to every single st.markdown but do not repeat them
-st.markdown(
-    """
-            #### Your Datasets 📁
-    """
-)
+st.markdown(""" #### Your Datasets 📁 """)
 
 if not available_datasets.empty:
     selected_dataset = st.selectbox(
@@ -47,41 +53,56 @@ if not available_datasets.empty:
 
 else:
     st.write("You have no datasets yet.")
+# endregion
 
-st.markdown(
-    """
-            #### Transcribe your files and make a new dataset 📝
-    """
-)
+# region Display Files
+st.markdown(""" #### Your Files """)
+
+with st.expander("Original 🎧"):
+    # region Raw Files
+    col1, col2 = st.columns(2, gap="small")
+    raw_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
+    raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
+    raw_files["delete"] = False
+    if raw_files.empty:
+        st.write("You have no files yet.")
+    else:
+        col1.dataframe(raw_files["filename"], use_container_width=True)
+        user_input_raw = col2.experimental_data_editor(raw_files["delete"])
+        if st.button("Delete Orginal"):
+            to_delete = raw_files[user_input_raw]
+            for file_path in to_delete["file_path"]:
+                file_path.unlink()
+            st.experimental_rerun()
+    # endregion
+
+# region Speaker Files
+with st.expander("Diarized 🗣"):
+    speaker_files = pd.DataFrame(list(DB_SPEAKERS.iterdir()), columns=["file_path"])
+    speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
+    speaker_files["delete"] = False
+    col3, col4 = st.columns(2, gap="small")
+    if speaker_files.empty:
+        st.write("You have no diarized files yet.")
+    else:
+        col3.dataframe(speaker_files["filename"], use_container_width=True)
+        user_input_speaker = col4.experimental_data_editor(speaker_files["delete"])
+        if st.button("Delete Diarized"):
+            to_delete = speaker_files[user_input_speaker]
+            for file_path in to_delete["file_path"]:
+                file_path.unlink()
+            st.experimental_rerun()
+    # endregion
+# endregion
 
 
-col1, col2 = st.columns(2)
-
-raw_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
-raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
-if not raw_files.empty:
-    col1.markdown(
-        f"""
-            You have __{len(raw_files)}__ audio file{is_plural(len(raw_files))} to transcribe
-        """
-    )
-    col1.dataframe(raw_files["filename"])
-
-speaker_files = pd.DataFrame(list(DB_SPEAKERS.iterdir()), columns=["file_path"])
-speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
-if not speaker_files.empty:
-    col2.markdown(
-        f"""
-            You have __{len(speaker_files)}__ diarized audio file{is_plural(len(speaker_files))} to transcribe
-        """
-    )
-    col2.dataframe(speaker_files["filename"])
+st.markdown("""#### Transcribe from full files or diarized files?""")
 
 choice = st.radio(
-    "Transcribe from",
-    options=["regular", "diarized"],
+    "Transcribe ",
+    options=["full", "diarized"],
+    label_visibility="hidden",
 )
-
 
 dataset_name = st.text_input(
     "dataset name", value="my_dataset_name", label_visibility="hidden"
@@ -99,7 +120,7 @@ if st.button("Make Dataset"):
     else:
         st.write(f"Dataset {dataset_name} already exists at {dataset_path}")
 
-    if choice == "regular":
+    if choice == "full":
         with st.spinner("Transcribing..."):
             transcribe(list(DB_CONVERTED.iterdir()), wavs_path, transcription_path)
     else:
