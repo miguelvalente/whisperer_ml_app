@@ -3,7 +3,7 @@ import streamlit as st
 from whisperer_ml.transcriber import transcribe
 import shutil
 from db_paths import DB_CONVERTED, DB_DATASETS, DB_ARCHIVES, DB_SPEAKERS
-from format_functions import is_plural
+from app.utils import is_plural, get_files_ignore_hidden
 
 # region SetUp Page
 hide_streamlit_style = """
@@ -32,7 +32,7 @@ st.markdown(
 # endregion
 
 # region Display Datasets
-available_datasets = pd.DataFrame(list(DB_DATASETS.iterdir()), columns=["dataset_path"])
+available_datasets = pd.DataFrame(get_files_ignore_hidden(DB_DATASETS), columns=["dataset_path"])
 available_datasets["dataset_name"] = available_datasets["dataset_path"].apply(
     lambda x: x.name
 )
@@ -63,7 +63,7 @@ st.markdown(""" #### Your Files """)
 with st.expander("Original 🎧"):
     # region Raw Files
     col1, col2 = st.columns(2, gap="small")
-    raw_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
+    raw_files = pd.DataFrame(get_files_ignore_hidden(DB_CONVERTED), columns=["file_path"])
     raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
     raw_files["delete"] = False
     if raw_files.empty:
@@ -80,7 +80,7 @@ with st.expander("Original 🎧"):
 
 # region Speaker Files
 with st.expander("Diarized 🗣"):
-    speaker_files = pd.DataFrame(list(DB_SPEAKERS.iterdir()), columns=["file_path"])
+    speaker_files = pd.DataFrame(get_files_ignore_hidden(DB_SPEAKERS), columns=["file_path"])
     speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
     speaker_files["delete"] = False
     col3, col4 = st.columns(2, gap="small")

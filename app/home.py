@@ -8,7 +8,7 @@ import streamlit as st
 from random import randint
 
 from db_paths import DB_RAW, DB_CONVERTED, DB_SPEAKERS
-from format_functions import is_plural
+from app.utils import is_plural, get_files_ignore_hidden
 
 # region SetUp Page
 hide_streamlit_style = """
@@ -62,7 +62,7 @@ if st.button("Upload & Convert"):
         st.session_state.pop("key")
         st.experimental_rerun()
 
-raw_files = pd.DataFrame(list(DB_RAW.iterdir()), columns=["file_path"])
+raw_files = pd.DataFrame(get_files_ignore_hidden(DB_RAW), columns=["file_path"])
 raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
 for file in stqdm(raw_files["file_path"], desc="Converting files to wav..."):
     convert(raw_files["file_path"], DB_CONVERTED)
@@ -73,7 +73,7 @@ for file in stqdm(raw_files["file_path"], desc="Converting files to wav..."):
 st.markdown(""" #### Your Files """)
 with st.expander("Original 🎧"):
     col1, col2 = st.columns(2, gap="small")
-    raw_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
+    raw_files = pd.DataFrame(get_files_ignore_hidden(DB_CONVERTED), columns=["file_path"])
     raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
     raw_files["delete"] = False
     if raw_files.empty:
@@ -96,7 +96,6 @@ st.markdown(
     """
 )
 
-#Use emoji at the start of the string to get the icon
 st.markdown(
     """
     3. 🎉 **Navigate to the Transcribe page to transcribe**

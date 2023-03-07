@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 from whisperer_ml.diarizer import diarize
 from db_paths import DB_CONVERTED, DB_SPEAKERS
-from format_functions import is_plural
+from app.utils import is_plural, get_files_ignore_hidden
 
 # region SetUp Page
 hide_streamlit_style = """
@@ -35,7 +35,7 @@ st.markdown(
 # endregion
 
 # region DataFrames
-speaker_files = pd.DataFrame(sorted(list(DB_SPEAKERS.iterdir())), columns=["file_path"])
+speaker_files = pd.DataFrame(sorted(get_files_ignore_hidden(DB_SPEAKERS)), columns=["file_path"])
 speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
 speaker_files["delete"] = False
 
@@ -43,7 +43,7 @@ diarized = speaker_files["filename"].apply(
     lambda x: "_".join(x.split("_")[:-2]) + "." + x.split(".")[-1]
 )
 
-converted_files = pd.DataFrame(sorted(list(DB_CONVERTED.iterdir())), columns=["file_path"])
+converted_files = pd.DataFrame(sorted(get_files_ignore_hidden(DB_CONVERTED)), columns=["file_path"])
 converted_files["filename"] = converted_files["file_path"].apply(lambda x: x.name)
 converted_files["number_of_speakers"] = 0 
 # endregion

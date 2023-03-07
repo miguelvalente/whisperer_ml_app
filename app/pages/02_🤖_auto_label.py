@@ -3,6 +3,8 @@ import pandas as pd
 from db_paths import DB_SPEAKERS, DB_SPEAKERS_LABELS
 from whisperer_ml.auto_labeler import auto_label
 
+from utils import get_files_ignore_hidden
+
 # region SetUp Page
 hide_streamlit_style = """
             <style>
@@ -31,7 +33,7 @@ st.markdown(
 )
 # endregion
 
-speaker_files = pd.DataFrame(list(DB_SPEAKERS.iterdir()), columns=["file_path"])
+speaker_files = pd.DataFrame(get_files_ignore_hidden(DB_SPEAKERS), columns=["file_path"])
 speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
 speaker_files["delete"] = False
 
