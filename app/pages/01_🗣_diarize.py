@@ -29,10 +29,12 @@ st.markdown(
 
             __NOTE__: This feature is highly dependent on the uniformity of the audio files.
             If a speaker in a file is present in diferent environments, the diarization might not work as expected.
+
     """
 )
 # endregion
 
+# region DataFrames
 speaker_files = pd.DataFrame(sorted(list(DB_SPEAKERS.iterdir())), columns=["file_path"])
 speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
 speaker_files["delete"] = False
@@ -44,12 +46,15 @@ diarized = speaker_files["filename"].apply(
 converted_files = pd.DataFrame(sorted(list(DB_CONVERTED.iterdir())), columns=["file_path"])
 converted_files["filename"] = converted_files["file_path"].apply(lambda x: x.name)
 converted_files["number_of_speakers"] = 0 
+# endregion
 
 with st.expander("Original 🎧"):
     if converted_files.empty:
         st.markdown(
-            f"""
-                You have no file{is_plural(len(converted_files))} to diarize
+            """
+                You have no files to diarize
+
+                Goto [Home](/) to upload your files
             """
         )
     else:
@@ -61,12 +66,16 @@ with st.expander("Original 🎧"):
             st.markdown(
                 """
                     You have no files to diarize
+
+                    Goto [Home](/) to upload your files
                 """
             )
         else:
             st.markdown(
                 f"""
                     You have __{len(converted_files)}__ file{is_plural(len(converted_files))} to diarize
+
+                    You can specify the number of speakers in each file. Or leave it blank to let the algorithm decide.
                 """
             )
             col1, col2 = st.columns(2, gap="small")

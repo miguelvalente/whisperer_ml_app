@@ -55,9 +55,11 @@ else:
     st.write("You have no datasets yet.")
 # endregion
 
+st.markdown(""" --- """)
+
+
 # region Display Files
 st.markdown(""" #### Your Files """)
-
 with st.expander("Original 🎧"):
     # region Raw Files
     col1, col2 = st.columns(2, gap="small")
@@ -96,12 +98,12 @@ with st.expander("Diarized 🗣"):
 # endregion
 
 
-st.markdown("""#### Transcribe from full files or diarized files?""")
+st.markdown("""---""")
 
 choice = st.radio(
-    "Transcribe ",
-    options=["full", "diarized"],
-    label_visibility="hidden",
+    "Transcribe from full files or diarized files?",
+    options=["original", "diarized"],
+    # label_visibility="hidden",
 )
 
 dataset_name = st.text_input(
@@ -120,7 +122,7 @@ if st.button("Make Dataset"):
     else:
         st.write(f"Dataset {dataset_name} already exists at {dataset_path}")
 
-    if choice == "full":
+    if choice == "original":
         with st.spinner("Transcribing..."):
             transcribe(list(DB_CONVERTED.iterdir()), wavs_path, transcription_path)
     else:
