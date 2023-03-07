@@ -5348,23 +5348,14 @@ test = ["pytest (>=3.0.0)"]
 
 [[package]]
 name = "whisperer-ml"
-<<<<<<< Updated upstream
-version = "0.1.5"
-=======
 version = "0.1.6"
->>>>>>> Stashed changes
 description = "Go from raw audio to a text-audio dataset with OpenAI's Whisper"
 category = "main"
 optional = false
 python-versions = ">=3.10,<3.11"
 files = [
-<<<<<<< Updated upstream
-    {file = "whisperer_ml-0.1.5-py3-none-any.whl", hash = "sha256:9a2aaa6230ea2468b0f492ed00cace05f1298038a5d40efb556690ec958a7099"},
-    {file = "whisperer_ml-0.1.5.tar.gz", hash = "sha256:718acfa5526cd6d0268bd0e278e2c1f73c96218729732d61f19bf745d762ca67"},
-=======
     {file = "whisperer_ml-0.1.6-py3-none-any.whl", hash = "sha256:fef34c63a8734a260a00ad392fad7ec2a6a04da7824c2970e299339be3a09b82"},
     {file = "whisperer_ml-0.1.6.tar.gz", hash = "sha256:cba8f9c5552dc5dc5c154b7d003e5a8f20458db96ac637c8d56d2e7233e1eda9"},
->>>>>>> Stashed changes
 ]
 
 [package.dependencies]
