@@ -124,10 +124,10 @@ if st.button("Make Dataset"):
 
     if choice == "original":
         with st.spinner("Transcribing..."):
-            transcribe(list(DB_CONVERTED.iterdir()), wavs_path, transcription_path)
+            transcribe(get_files_ignore_hidden(DB_CONVERTED), wavs_path, transcription_path)
     else:
         with st.spinner("Transcribing..."):
-            transcribe(list(DB_SPEAKERS.iterdir()), wavs_path, transcription_path)
+            transcribe(get_files_ignore_hidden(DB_SPEAKERS), wavs_path, transcription_path)
 
     shutil.make_archive(
         DB_ARCHIVES.joinpath(dataset_name),
