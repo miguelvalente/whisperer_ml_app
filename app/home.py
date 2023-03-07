@@ -7,7 +7,7 @@ import pandas as pd
 import streamlit as st
 from random import randint
 
-from db_paths import DB_RAW, DB_CONVERTED
+from db_paths import DB_RAW, DB_CONVERTED, DB_SPEAKERS
 from format_functions import is_plural
 
 # region SetUp Page
@@ -47,7 +47,7 @@ st.markdown(
 if "key" not in st.session_state:
     st.session_state.key = str(randint(1000, 100000000))
 
-# region Upload Files
+# region Upload/Convert Files
 uploaded_files = st.file_uploader(
     "Upload Files",
     accept_multiple_files=True,
@@ -65,17 +65,34 @@ if st.button("Upload & Convert"):
 
 raw_files = pd.DataFrame(list(DB_RAW.iterdir()), columns=["file_path"])
 raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
+# with st.spinner("Converting files to wav..."):
+for file in stqdm(raw_files["file_path"], desc="Converting files to wav..."):
+    convert(raw_files["file_path"], DB_CONVERTED)
+    file.unlink()
+# endregion
 
-if not raw_files.empty:
-    st.markdown(
-        f"""
-            You have uploaded __{len(raw_files)}__ file{is_plural(len(raw_files))}
-        """
-    )
-    st.dataframe(raw_files["filename"])
-    for file in stqdm(raw_files["file_path"], desc="Converting files to wav..."):
-        convert([file], DB_CONVERTED)
-        file.unlink()
+
+# region Display Files
+st.markdown(""" #### Your Files """)
+
+with st.expander("Original 🎧"):
+    # region Raw Files
+    col1, col2 = st.columns(2, gap="small")
+    raw_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
+    raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
+    raw_files["delete"] = False
+    if raw_files.empty:
+        st.write("You have no files yet.")
+    else:
+        col1.dataframe(raw_files["filename"], use_container_width=True)
+        user_input_raw = col2.experimental_data_editor(raw_files["delete"])
+        if st.button("Delete Original"):
+            to_delete = raw_files[user_input_raw]
+            for file_path in to_delete["file_path"]:
+                file_path.unlink()
+            st.experimental_rerun()
+    # endregion
+
 # endregion
 
 st.markdown(
