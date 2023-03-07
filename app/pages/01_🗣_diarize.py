@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 from whisperer_ml.diarizer import diarize
 from db_paths import DB_CONVERTED, DB_SPEAKERS
-from app.utils import is_plural, get_files_ignore_hidden
+from utils import is_plural, get_files_ignore_hidden
 
 # region SetUp Page
 hide_streamlit_style = """

@@ -3,7 +3,7 @@ import streamlit as st
 from whisperer_ml.transcriber import transcribe
 import shutil
 from db_paths import DB_CONVERTED, DB_DATASETS, DB_ARCHIVES, DB_SPEAKERS
-from app.utils import is_plural, get_files_ignore_hidden
+from utils import is_plural, get_files_ignore_hidden
 
 # region SetUp Page
 hide_streamlit_style = """

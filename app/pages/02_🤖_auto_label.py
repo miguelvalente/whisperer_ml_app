@@ -43,7 +43,7 @@ speaker_files["delete"] = False
 with st.expander("Diarized 🗣"):
     if speaker_files.empty:
         st.markdown(
-            f"""
+            """
                 You have no diarized files to auto-label
 
                 Goto the [Diarize](/02_🗣_diarize) page to diarize your files and start labelling speakers

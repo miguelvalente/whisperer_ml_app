@@ -8,7 +8,7 @@ import streamlit as st
 from random import randint
 
 from db_paths import DB_RAW, DB_CONVERTED, DB_SPEAKERS
-from app.utils import is_plural, get_files_ignore_hidden
+from utils import is_plural, get_files_ignore_hidden
 
 # region SetUp Page
 hide_streamlit_style = """
