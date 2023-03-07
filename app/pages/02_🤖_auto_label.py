@@ -33,37 +33,75 @@ st.markdown(
 
 speaker_files = pd.DataFrame(list(DB_SPEAKERS.iterdir()), columns=["file_path"])
 speaker_files["filename"] = speaker_files["file_path"].apply(lambda x: x.name)
+speaker_files["delete"] = False
 
-st.dataframe(speaker_files["filename"])
+# st.dataframe(speaker_files["filename"])
 
-if speaker_files.empty:
+
+with st.expander("Diarized 🗣"):
+    if speaker_files.empty:
+        st.markdown(
+            f"""
+                You have no diarized files to auto-label
+
+                Goto the [Diarize](/02_🗣_diarize) page to diarize your files and start labelling speakers
+
+            """
+        )
+    else:
+        st.markdown(
+            f"""
+                You have __{len(speaker_files)}__ diarizations
+            """
+        )
+
+        col3, col4 = st.columns(2, gap="small")
+        col3.dataframe(speaker_files["filename"], use_container_width=True)
+        user_input = col4.experimental_data_editor(
+            speaker_files["delete"],
+        )
+        if st.button("Delete Selected Files"):
+            to_delete = speaker_files[user_input]
+            for file in to_delete["filename"]:
+                DB_SPEAKERS.joinpath(file).unlink()
+            st.experimental_rerun()
+
+
+if not speaker_files.empty:
     st.markdown(
         """
-            You have no files to auto-label
+            #### Start labelling
+
+            Note: _The new auto-label results will overwrite the previous one_
         """
     )
-else:
+
     number_speakers = st.number_input("Number of speakers", min_value=2, max_value=10)
 
     if st.button("Auto-Label"):
-        if number_speakers:
-            auto_label(
-                number_speakers,
-                speaker_files["file_path"],
-                DB_SPEAKERS_LABELS.joinpath("speakers.txt"),
+        if isinstance(number_speakers, int) and number_speakers >= 2:
+            with st.spinner("Auto-Labeling ..."):
+                DB_SPEAKERS_LABELS.joinpath("speakers.txt").unlink(missing_ok=True)
+                auto_label(
+                    number_speakers,
+                    speaker_files["file_path"],
+                    DB_SPEAKERS_LABELS.joinpath("speakers.txt"),
+                )
+        else:
+            st.error("Must define number of speakers bigger or equal to 2")
+
+    with st.expander("Auto-Label Results 📊"):
+        if DB_SPEAKERS_LABELS.joinpath("speakers.txt").exists():
+            st.dataframe(
+                pd.read_csv(
+                    DB_SPEAKERS_LABELS.joinpath("speakers.txt"),
+                    sep="|",
+                    names=["filename", "label"],
+                )
             )
         else:
-            st.error("Must define number of speakers")
-
-    st.markdown(
-        """
-            ## Auto-Label Results 🎉
-        """
-    )
-    st.dataframe(
-        pd.read_csv(
-            DB_SPEAKERS_LABELS.joinpath("speakers.txt"),
-            sep="|",
-            names=["filename", "label"],
-        )
-    )
+            st.markdown(
+                """
+                    You have no auto-label results
+                """
+            )

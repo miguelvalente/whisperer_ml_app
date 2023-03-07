@@ -37,8 +37,7 @@ st.markdown(
     """
     Whisperer is a small open-source project for automatic text-audio dataset making.
 
-
-    1. **Upload some audio or video files**
+    1. 👇 **Upload your audio files or video files to convert them to wav** 
 
     """
 )
@@ -65,18 +64,14 @@ if st.button("Upload & Convert"):
 
 raw_files = pd.DataFrame(list(DB_RAW.iterdir()), columns=["file_path"])
 raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
-# with st.spinner("Converting files to wav..."):
 for file in stqdm(raw_files["file_path"], desc="Converting files to wav..."):
     convert(raw_files["file_path"], DB_CONVERTED)
     file.unlink()
 # endregion
 
-
 # region Display Files
 st.markdown(""" #### Your Files """)
-
 with st.expander("Original 🎧"):
-    # region Raw Files
     col1, col2 = st.columns(2, gap="small")
     raw_files = pd.DataFrame(list(DB_CONVERTED.iterdir()), columns=["file_path"])
     raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
@@ -86,17 +81,26 @@ with st.expander("Original 🎧"):
     else:
         col1.dataframe(raw_files["filename"], use_container_width=True)
         user_input_raw = col2.experimental_data_editor(raw_files["delete"])
-        if st.button("Delete Original"):
+        if st.button("Delete"):
             to_delete = raw_files[user_input_raw]
             for file_path in to_delete["file_path"]:
                 file_path.unlink()
             st.experimental_rerun()
-    # endregion
-
 # endregion
 
 st.markdown(
     """
-    2. 👈  **Use the commands from the menu on the left** 
+    2. 👈  **You have the option to diarize and to auto-label the uploaded files** 
+
+        Navigate to the respective page to do so.
+    """
+)
+
+#Use emoji at the start of the string to get the icon
+st.markdown(
+    """
+    3. 🎉 **Navigate to the Transcribe page to transcribe**
+
+        Wait for whisperer to finish the transcription and then download the dataset. 
     """
 )
