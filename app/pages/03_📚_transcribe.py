@@ -46,7 +46,7 @@ if not available_datasets.empty:
 
     down = st.download_button(
         label="Download Dataset",
-        data=DB_ARCHIVES.joinpath(f"{selected_dataset}.zip").read_bytes(),
+        data=DB_ARCHIVES.joinpath(selected_dataset).read_bytes(),
         file_name=f"{selected_dataset}",
         mime="application/zip",
     )
