@@ -32,7 +32,7 @@ st.markdown(
 # endregion
 
 # region Display Datasets
-available_datasets = pd.DataFrame(get_files_ignore_hidden(DB_DATASETS), columns=["dataset_path"])
+available_datasets = pd.DataFrame(get_files_ignore_hidden(DB_ARCHIVES), columns=["dataset_path"])
 available_datasets["dataset_name"] = available_datasets["dataset_path"].apply(
     lambda x: x.name
 )
