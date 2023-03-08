@@ -1,0 +1,7 @@
+lex_carmack1_SPEAKER_00.wav|1
+lex_debate_SPEAKER_00.wav|0
+lex_debate_SPEAKER_01.wav|0
+lex_levin1_SPEAKER_00.wav|4
+lex_levin1_SPEAKER_01.wav|2
+lex_carmack1_SPEAKER_01.wav|3
+lex_debate_SPEAKER_02.wav|1

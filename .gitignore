@@ -1,18 +1,4 @@
 *__pycache__*
-data/archives/
-data/converted_files/
-data/datasets/
-data/raw_files/
-data/speakers/
-data/speakers_labels/
-
-!data/archives/.gitkeep
-!data/converted_files/.gitkeep
-!data/datasets/.gitkeep
-!data/raw_files/.gitkeep
-!data/speakers/.gitkeep
-!data/speakers_labels/.gitkeep
-!data/.gitkeep
 
 
 thoughts.txt
