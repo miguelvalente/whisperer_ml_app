@@ -1,10 +1,10 @@
 *__pycache__*
-data/archives/*
-data/converted_files/*
-data/datasets/*
-data/raw_files/*
-data/speakers/*
-data/speakers_labels/*
+data/archives/
+data/converted_files/
+data/datasets/
+data/raw_files/
+data/speakers/
+data/speakers_labels/
 
 !data/archives/.gitkeep
 !data/converted_files/.gitkeep

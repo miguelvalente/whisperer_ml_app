@@ -55,12 +55,13 @@ uploaded_files = st.file_uploader(
 )
 
 if st.button("Upload & Convert"):
-    if uploaded_files and "key" in st.session_state.keys():
-        for file in uploaded_files:
-            data, samplerate = sf.read(file)
-            sf.write(DB_RAW.joinpath(file.name), data, samplerate)
-        st.session_state.pop("key")
-        st.experimental_rerun()
+    st.warning("Demo version ")
+    # if uploaded_files and "key" in st.session_state.keys():
+    #     for file in uploaded_files:
+    #         data, samplerate = sf.read(file)
+    #         sf.write(DB_RAW.joinpath(file.name), data, samplerate)
+    #     st.session_state.pop("key")
+    #     st.experimental_rerun()
 
 raw_files = pd.DataFrame(get_files_ignore_hidden(DB_RAW), columns=["file_path"])
 raw_files["filename"] = raw_files["file_path"].apply(lambda x: x.name)
@@ -82,10 +83,11 @@ with st.expander("Original 🎧"):
         col1.dataframe(raw_files["filename"], use_container_width=True)
         user_input_raw = col2.experimental_data_editor(raw_files["delete"])
         if st.button("Delete"):
-            to_delete = raw_files[user_input_raw]
-            for file_path in to_delete["file_path"]:
-                file_path.unlink()
-            st.experimental_rerun()
+            st.warning("Demo version ")
+            # to_delete = raw_files[user_input_raw]
+            # for file_path in to_delete["file_path"]:
+            #     file_path.unlink()
+            # st.experimental_rerun()
 # endregion
 
 st.markdown(

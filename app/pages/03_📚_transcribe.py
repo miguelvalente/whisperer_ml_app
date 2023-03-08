@@ -72,10 +72,12 @@ with st.expander("Original 🎧"):
         col1.dataframe(raw_files["filename"], use_container_width=True)
         user_input_raw = col2.experimental_data_editor(raw_files["delete"])
         if st.button("Delete Orginal"):
-            to_delete = raw_files[user_input_raw]
-            for file_path in to_delete["file_path"]:
-                file_path.unlink()
-            st.experimental_rerun()
+
+            st.warning("Demo version ")
+            # to_delete = raw_files[user_input_raw]
+            # for file_path in to_delete["file_path"]:
+            #     file_path.unlink()
+            # st.experimental_rerun()
     # endregion
 
 # region Speaker Files
@@ -90,10 +92,12 @@ with st.expander("Diarized 🗣"):
         col3.dataframe(speaker_files["filename"], use_container_width=True)
         user_input_speaker = col4.experimental_data_editor(speaker_files["delete"])
         if st.button("Delete Diarized"):
-            to_delete = speaker_files[user_input_speaker]
-            for file_path in to_delete["file_path"]:
-                file_path.unlink()
-            st.experimental_rerun()
+
+            st.warning("Demo version ")
+            # to_delete = speaker_files[user_input_speaker]
+            # for file_path in to_delete["file_path"]:
+            #     file_path.unlink()
+            # st.experimental_rerun()
     # endregion
 # endregion
 
@@ -111,27 +115,28 @@ dataset_name = st.text_input(
 )
 
 if st.button("Make Dataset"):
-    dataset_path = DB_DATASETS.joinpath(dataset_name)
-    wavs_path = dataset_path.joinpath("wavs")
-    transcription_path = dataset_path.joinpath("transcriptions")
+    st.warning("Demo version ")
+    # dataset_path = DB_DATASETS.joinpath(dataset_name)
+    # wavs_path = dataset_path.joinpath("wavs")
+    # transcription_path = dataset_path.joinpath("transcriptions")
 
-    if not dataset_path.exists():
-        dataset_path.mkdir(exist_ok=True)
-        wavs_path.mkdir(exist_ok=True)
-        transcription_path.mkdir(exist_ok=True)
-    else:
-        st.write(f"Dataset {dataset_name} already exists at {dataset_path}")
+    # if not dataset_path.exists():
+    #     dataset_path.mkdir(exist_ok=True)
+    #     wavs_path.mkdir(exist_ok=True)
+    #     transcription_path.mkdir(exist_ok=True)
+    # else:
+    #     st.write(f"Dataset {dataset_name} already exists at {dataset_path}")
 
-    if choice == "original":
-        with st.spinner("Transcribing..."):
-            transcribe(get_files_ignore_hidden(DB_CONVERTED), wavs_path, transcription_path)
-    else:
-        with st.spinner("Transcribing..."):
-            transcribe(get_files_ignore_hidden(DB_SPEAKERS), wavs_path, transcription_path)
+    # if choice == "original":
+    #     with st.spinner("Transcribing..."):
+    #         transcribe(get_files_ignore_hidden(DB_CONVERTED), wavs_path, transcription_path)
+    # else:
+    #     with st.spinner("Transcribing..."):
+    #         transcribe(get_files_ignore_hidden(DB_SPEAKERS), wavs_path, transcription_path)
 
-    shutil.make_archive(
-        DB_ARCHIVES.joinpath(dataset_name),
-        "zip",
-        DB_DATASETS.joinpath(dataset_name),
-    )
-    st.experimental_rerun()
+    # shutil.make_archive(
+    #     DB_ARCHIVES.joinpath(dataset_name),
+    #     "zip",
+    #     DB_DATASETS.joinpath(dataset_name),
+    # )
+    # st.experimental_rerun()

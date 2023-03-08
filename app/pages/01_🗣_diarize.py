@@ -85,9 +85,10 @@ with st.expander("Original 🎧"):
             )
             number_of_speakers = [number if number else None for number in user_input_number]
             if st.button("Diarize"):
-                with st.spinner("Diarizing files..."):
-                    diarize(converted_files["file_path"], DB_SPEAKERS, join_speaker=True, num_speakers=number_of_speakers)
-                    st.experimental_rerun()
+                st.warning("Demo version ")
+                # with st.spinner("Diarizing files..."):
+                #     diarize(converted_files["file_path"], DB_SPEAKERS, join_speaker=True, num_speakers=number_of_speakers)
+                #     st.experimental_rerun()
 
 
 with st.expander("Diarized 🗣"):
@@ -104,7 +105,8 @@ with st.expander("Diarized 🗣"):
             speaker_files["delete"],
         )
         if st.button("Delete Selected Files"):
-            to_delete = speaker_files[user_input]
-            for file in to_delete["filename"]:
-                DB_SPEAKERS.joinpath(file).unlink()
-            st.experimental_rerun()
+            st.warning("Demo version ")
+            # to_delete = speaker_files[user_input]
+            # for file in to_delete["filename"]:
+            #     DB_SPEAKERS.joinpath(file).unlink()
+            # st.experimental_rerun()

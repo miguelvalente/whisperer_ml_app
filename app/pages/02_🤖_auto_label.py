@@ -63,10 +63,11 @@ with st.expander("Diarized 🗣"):
             speaker_files["delete"],
         )
         if st.button("Delete Selected Files"):
-            to_delete = speaker_files[user_input]
-            for file in to_delete["filename"]:
-                DB_SPEAKERS.joinpath(file).unlink()
-            st.experimental_rerun()
+            st.warning("Demo version ")
+            # to_delete = speaker_files[user_input]
+            # for file in to_delete["filename"]:
+            #     DB_SPEAKERS.joinpath(file).unlink()
+            # st.experimental_rerun()
 
 
 if not speaker_files.empty:
@@ -81,16 +82,18 @@ if not speaker_files.empty:
     number_speakers = st.number_input("Number of speakers", min_value=2, max_value=10)
 
     if st.button("Auto-Label"):
-        if isinstance(number_speakers, int) and number_speakers >= 2:
-            with st.spinner("Auto-Labeling ..."):
-                DB_SPEAKERS_LABELS.joinpath("speakers.txt").unlink(missing_ok=True)
-                auto_label(
-                    number_speakers,
-                    speaker_files["file_path"],
-                    DB_SPEAKERS_LABELS.joinpath("speakers.txt"),
-                )
-        else:
-            st.error("Must define number of speakers bigger or equal to 2")
+
+        st.warning("Demo version ")
+        # if isinstance(number_speakers, int) and number_speakers >= 2:
+        #     with st.spinner("Auto-Labeling ..."):
+        #         DB_SPEAKERS_LABELS.joinpath("speakers.txt").unlink(missing_ok=True)
+        #         auto_label(
+        #             number_speakers,
+        #             speaker_files["file_path"],
+        #             DB_SPEAKERS_LABELS.joinpath("speakers.txt"),
+        #         )
+        # else:
+        #     st.error("Must define number of speakers bigger or equal to 2")
 
     with st.expander("Auto-Label Results 📊"):
         if DB_SPEAKERS_LABELS.joinpath("speakers.txt").exists():
