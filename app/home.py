@@ -96,7 +96,6 @@ st.markdown(
     """
 )
 
-#Use emoji at the start of the string to get the icon
 st.markdown(
     """
     3. 🎉 **Navigate to the Transcribe page to transcribe**

@@ -6,6 +6,9 @@ Built with [Streamlit](https://streamlit.io/).
 
 ## Getting Started
 
+
+You can explore a demo of the app [here](https://miguelvalente-whisperer-ml-app-apphome-deployment-ykyy4l.streamlit.app/).
+
 ### Prerequisites
 
 - [Docker](https://www.docker.com/)
